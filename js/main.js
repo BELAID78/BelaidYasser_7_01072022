@@ -227,7 +227,7 @@ function renderDropDownSearchFilterTemplate(data, element) {
     data = [...data]
 
     data.forEach((filter, index) => {
-        dropDownSearchTextTemplate += `<div><p data-type="${pattern}" class="clickable mb-0 py-2 px-2" id="${pattern}-${index}">${filter}</p></div>`
+        dropDownSearchTextTemplate += `<div><p data-type="${pattern}" class="clickable mb-0 py-2" id="${pattern}-${index}">${filter}</p></div>`
     })
 
     element.innerHTML = dropDownSearchTextTemplate
@@ -247,15 +247,31 @@ document.querySelectorAll('.clickable').forEach(clickable => {
 //render clicked drop down filter as tag
 function renderClickDropDownFilterAsTag(element) {
     //create template
-    let template = `<div class="search-filter-tag px-2 py-1 search-filter-tag-${element.getAttribute('data-type')} me-1">
+    let template = `<div class="search-filter-tag px-2 py-1 search-filter-tag-${element.getAttribute('data-type')} me-1" id="${element.id}">
                         <div class="search-filter-tag-title me-2">
                             ${element.innerText}
                         </div>
-                        <div class="search-filter-tag-icon">
-                            <i class="far fa-times-circle" for-id="${element.id}"></i>
+                        <div class="search-filter-tag-icon btn-remove-tag">
+                            <i class="far fa-times-circle" pattern="${element.getAttribute('data-type')}" for-id="${element.id}"></i>
                         </div>
                     </div>`
 
     //append the tag to tags list
     document.querySelector('.search-filter-tags').innerHTML += template;
 }
+
+//remove the tag when click on close
+window.addEventListener('click', function(e){
+    
+    //if the clicked element contain the tag close clicked
+    if(e.target.classList.contains('fa-times-circle')) {
+        let pattern = e.target.getAttribute('pattern'),
+            id = e.target.getAttribute('for-id');
+
+        //get the original click filter from drop down
+        document.querySelector(`.drop-down-${pattern} #${id}`).closest('div').classList.remove('hidden');
+
+        //remove the clicked tag
+        e.target.closest('.search-filter-tag').remove()
+    }
+});
