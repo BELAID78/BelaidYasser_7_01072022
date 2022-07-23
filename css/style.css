@@ -43,6 +43,7 @@
 
 .drop-down-filter {
     display: inline-block;
+    vertical-align: top;
 }
 
 .drop-down-primary, .drop-down-success, .drop-down-danger {
@@ -233,7 +234,9 @@
     width: 100%;
 }
 
-.drop-down-primary.active, .drop-down-success.active, .drop-down-danger.active {
+.drop-down-primary.active,
+.drop-down-success.active,
+.drop-down-danger.active {
     cursor: default;
 }
 
@@ -243,7 +246,7 @@
 }
 
 .hidden {
-    display: none;
+    display: none!important;
 }
 
 /* scroll bar design */
@@ -262,4 +265,9 @@
 
 .drop-down-filter-content::-webkit-scrollbar-thumb:hover {
     background: rgb(255, 255, 255); 
+}
+.primary-no-result p,
+.success-no-result p,
+.danger-no-result p {
+    padding-left: 2px;
 }
