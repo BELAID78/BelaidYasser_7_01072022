@@ -9,8 +9,7 @@ chosenFilters = {
     ingredients : [],
     appareils   : [],
     ustensiles  : [],
-},
-newDishes = [];
+};
 
 let dishesTemplate = createDishesAndFiltersTemplate(dishes);
 
@@ -96,28 +95,13 @@ window.addEventListener('click', function(e){
             document.querySelector(`p#${element.getAttribute('for-id')}`).closest('div').classList.add('hidden')
             document.querySelector(`p#${element.getAttribute('for-id')}`).closest('div').classList.add('tagged')
         });
-
-        let searchResult = searchInDishes(document.querySelector('.input-search').value.toLowerCase(), getCompatibledishWithFilters());
-
-        let newDishesTemplate = createDishesTemplates(searchResult);
-
-        renderDishes(newDishesTemplate);
     }
 });
 
 //search inside drop down filter
 document.querySelectorAll('.drop-down-filter-input-search-ingredient, .drop-down-filter-input-search-appareil, .drop-down-filter-input-search-ustensile').forEach(inputSearch => inputSearch.addEventListener('keyup', filter));
 
-//search by global search
-document.querySelector('.input-search').addEventListener('keyup', function(e) {
-    let search = e.target.value,
-        data = getCompatibledishWithFilters().length === 0 ? dishes : getCompatibledishWithFilters(),
-        newDishesTemplate = (search.length > 2) ? createDishesTemplates(searchInDishes(search.toLowerCase(), getCompatibledishWithFilters())) : createDishesTemplates(data); 
-
-    renderDishes(newDishesTemplate);
-
-});
-
+//on click add filter to tags and update filters to be compatible
 window.addEventListener('click', function(e) {
     if(e.target.classList.contains('clickable')) {
         let searchIn = e.target.getAttribute('data-search-in'),
@@ -132,6 +116,12 @@ window.addEventListener('click', function(e) {
 
         document.querySelector(`p[data-value="${filterText}"]`).closest('div').classList.add('hidden');
         document.querySelector(`p[data-value="${filterText}"]`).closest('div').classList.add('tagged');
+
+        //hide the chosen filter
+        document.querySelectorAll('.search-filter-tag').forEach(tag => {
+            document.querySelector(`.clickable#${tag.id}`).closest('div').classList.add('hidden');
+            document.querySelector(`.clickable#${tag.id}`).closest('div').classList.add('tagged');
+        });
     }
 });
 
@@ -259,7 +249,6 @@ function emptyDropDownSearchText(exceptElement) {
         document.querySelector('.drop-down-filter.drop-down-success input').value = ""
     }
 
-
     if(exceptElement !== "ustensiles") {
         document.querySelector('.drop-down-filter.drop-down-danger input').value = ""
     }
@@ -296,7 +285,7 @@ function renderDropDownSearchFilterTemplate(data, element) {
 //render clicked drop down filter as tag
 function renderClickDropDownFilterAsTag(element) {
     //create template
-    let template = `<div class="search-filter-tag px-2 py-1 search-filter-tag-${element.getAttribute('data-type')} me-1" id="${element.id}">
+    let template = `<div class="search-filter-tag px-2 py-1 search-filter-tag-${element.getAttribute('data-type')} me-1 mb-1" id="${element.id}">
                         <div class="search-filter-tag-title me-2">
                             ${element.innerText}
                         </div>
@@ -342,13 +331,7 @@ function updateDropDownFilters(searchFilterKey, text, dishesList) {
 
     chosenFilters[searchFilterKey].push(text)
 
-    newDishes = updateDishesData();
-
-    let searchResult = searchInDishes(document.querySelector('.input-search').value.toLowerCase(), getCompatibledishWithFilters());
-    
-    let newDishesTemplate = createDishesTemplates(searchResult);
-
-    renderDishes(newDishesTemplate);
+    let newDishesTemplate = createDishesTemplates(dishesList);
 }
 
 //create new dishes array from filtred ingredient, appareils and ustensiles
@@ -450,35 +433,6 @@ function toggleDropDownFilter(event, element) {
             document.querySelector('.drop-down-filter.drop-down-danger').classList.remove('active');
         }
     }
-}
-
-function searchInDishes(search, dishList) {
-    let data = dishList.length === 0 ? dishes : dishList;
-
-    let founded = data.filter(dish => {
-        let dishName = dish.name,
-            dishDescription = dish.description,
-            dishIngredients = dish.ingredients;
-    
-        //dish name includes searched word
-        if(dishName.toLowerCase().includes(search)) {
-            return dish;
-        }
-    
-        //dish description includes searched word
-        if(dishDescription.toLowerCase().includes(search)) {
-            return dish;
-        }
-    
-        //dish ingredients includes search word
-        let foundedIngredients = dishIngredients.find(ingredient => ingredient.ingredient.toLowerCase().includes(search));
-
-        if(foundedIngredients !== undefined) {
-            return dish
-        }
-    });
-
-    return founded
 }
 
 function renderDishesFilter(dishes) {
