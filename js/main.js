@@ -112,7 +112,7 @@ document.querySelectorAll('.drop-down-filter-input-search-ingredient, .drop-down
 document.querySelector('.input-search').addEventListener('keyup', function(e) {
     let search = e.target.value,
         data = getCompatibledishWithFilters().length === 0 ? dishes : getCompatibledishWithFilters(),
-        newDishesTemplate = (search.length > 2) ? createDishesTemplates(searchInDishes(search.toLowerCase())) : createDishesTemplates(data); 
+        newDishesTemplate = (search.length > 2) ? createDishesTemplates(searchInDishes(search.toLowerCase(), getCompatibledishWithFilters())) : createDishesTemplates(data); 
 
     renderDishes(newDishesTemplate);
 
@@ -193,7 +193,7 @@ function createDishesTemplates(dishes) {
         dishesTemplate += `<div class="col-sm-6 col-lg-4">
                         <div class="row">
                             <div class="col-12 dishe-image-container">
-                                <img class="img-fluid" src="/assets/images/${dish.id}.jpg" alt="${dish.name}">
+                                <img class="img-fluid" src="assets/images/${dish.id}.jpg" alt="${dish.name}">
                             </div>
                         </div>
                         <div class="dishe-container mb-5">
