@@ -37,10 +37,10 @@
 
             <div class="search-filter mt-4">
               <div class="drop-down-filter px-3 py-3 me-2 drop-down-primary" data-filter-type="ingredients">
-                              <div class="drop-down-filter-search">
+                <div class="drop-down-filter-search">
                   <div class="drop-down-filter-title me-4">
                     <span>Ingredients</span>
-                    <input class="drop-down-filter-input-search-ingredient" data-search="primary" type="text" placeholder="Rechercher un ingrédient">                  
+                    <input class="drop-down-filter-input-search-ingredient" data-search="primary" type="text" placeholder="Rechercher un ingrédient">
                   </div>
                   <div class="drop-down-filter-icon">
                     <i class="fas fa-chevron-down"></i>
@@ -48,10 +48,13 @@
                   </div>
                 </div>
                 <div class="drop-down-filter-content px-3 py-3">
-
+                  
+                </div>
+                <div class="primary-no-result no-result-message pt-2 hidden">
+                  <p class="mb-0">aucun ingrédient correspond à votre recherche</p>
                 </div>
               </div>
-
+              
               <div class="drop-down-filter closed px-3 py-3 me-2 drop-down-success" data-filter-type="appareils">
                 <div class="drop-down-filter-search">
                   <div class="drop-down-filter-title me-4">
@@ -63,7 +66,10 @@
                     <i class="fas fa-chevron-up"></i>
                   </div>
                 </div>
-                <div class="drop-down-filter-content px-3 py-3">                  
+                <div class="drop-down-filter-content px-3 py-3">
+                </div>
+                <div class="success-no-result no-result-message pt-2 hidden">
+                  <p class="mb-0">aucun appareil correspond à votre recherche</p>
                 </div>
               </div>
 
@@ -71,7 +77,7 @@
                 <div class="drop-down-filter-search">
                   <div class="drop-down-filter-title me-4">
                     <span>Ustensiles</span>
-                    <input class="drop-down-filter-input-search-appareil" data-search="success" type="text" placeholder="Rechercher un appareil">
+                    <input class="drop-down-filter-input-search-ustensile" data-search="danger" type="text" placeholder="Rechercher un ustensile">
                   </div>
                   <div class="drop-down-filter-icon">
                     <i class="fas fa-chevron-down"></i>
@@ -80,14 +86,20 @@
                 </div>
                 <div class="drop-down-filter-content px-3 py-3">
                 </div>
+                <div class="danger-no-result no-result-message pt-2 hidden">
+                  <p class="mb-0">aucun ustensile correspond à votre recherche</p>
+                </div>
               </div>
             </div>
           </div>
           <div class="dishes mt-4 row">
-          
+          </div>
+          <div class="no-result mt-4 hidden">
+            <p class="text-center">No result found</p>
           </div>
       </main>
     </div>
-    <script src="js/main.js" type="module"></script>
+
+      <script src="js/main.js" type="module"></script>
   </body>
 </html>
