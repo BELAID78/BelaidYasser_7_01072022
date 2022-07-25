@@ -121,14 +121,25 @@ window.addEventListener('click', function(e) {
         
         renderDishesFilter(getCompatibledishWithFilters());
 
-        document.querySelector(`p[data-value="${filterText}"]`).closest('div').classList.add('hidden');
-        document.querySelector(`p[data-value="${filterText}"]`).closest('div').classList.add('tagged');
+        let item = document.querySelector(`p[data-value="${filterText}"]`)
 
+        if(item) {
+            item.closest('div').classList.add('hidden');
+            item.closest('div').classList.add('tagged');
+        }
+    
         //hide the chosen filter
         document.querySelectorAll('.search-filter-tag').forEach(tag => {
-            document.querySelector(`.clickable#${tag.id}`).closest('div').classList.add('hidden');
-            document.querySelector(`.clickable#${tag.id}`).closest('div').classList.add('tagged');
+            let item = document.querySelector(`.clickable#${tag.id}`);
+
+            if(item) {
+                item.closest('div').classList.add('hidden');
+                item.closest('div').classList.add('tagged')
+            }
         });
+
+        //empty search input
+        document.querySelector(`input[data-search="${e.target.getAttribute('data-type')}"]`).value = ""
     }
 });
 
@@ -451,7 +462,7 @@ function toggleDropDownFilter(event, element) {
         document.querySelectorAll('.drop-down-filter-content').forEach(item => {
             item.classList.remove('hidden')
         })
-        
+
     }else{
         //show the click drop down element and hide the other
         element.classList.add('active');
@@ -490,11 +501,22 @@ function renderDishesFilter(dishes) {
 
 //get the dishes include the filtered ingredients, appareils and ustensiles
 function getCompatibledishWithFilters() {
-    let dishList = dishes.filter(dish => 
-        chosenFilters.ingredients.length === 0 ? dish : dish.ingredients.find(
-            dishIng => chosenFilters.ingredients.includes(makeFirstCharacterUpperCase(dishIng.ingredient.toLowerCase()))
-        )
-    );
+    let dishList = dishes.filter(dish => {
+
+        if(chosenFilters.ingredients.length === 0) {
+            return dish
+        }
+
+        let dishIngredientArray = dish.ingredients.map(ingredient => ingredient.ingredient);
+
+        let allIngredientIncluded = chosenFilters.ingredients.every(item => {
+            return dishIngredientArray.includes(item)
+        });
+
+        if(allIngredientIncluded) {
+            return dish;
+        }
+    });
 
     dishList = chosenFilters.appareils.length === 0 ? dishList : dishList.filter(dish => 
         chosenFilters.appareils.find(
@@ -502,13 +524,24 @@ function getCompatibledishWithFilters() {
         )
     )
 
-    dishList = chosenFilters.ustensiles.length === 0 ? dishList : dishList.filter(dish => 
-        dish.ustensils.find(
-            dishUst => chosenFilters.ustensiles.includes(makeFirstCharacterUpperCase(dishUst.toLowerCase()))
-        )
-    );
+    dishList = dishList.filter(dish => {
 
-    return dishList;
+        if(chosenFilters.ustensiles.length === 0) {
+            return dish;
+        }
+
+        let dishUstensilesArray = dish.ustensils.map(ustensil => makeFirstCharacterUpperCase(ustensil.toLowerCase()));
+
+        let allUstensilesIncluded = chosenFilters.ustensiles.every(item => {
+            return dishUstensilesArray.includes(item)
+        });
+
+        if(allUstensilesIncluded) {
+            return dish;
+        }
+    })
+
+    return dishList
 }
 
 //get ingredients from listed dish
