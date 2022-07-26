@@ -9,7 +9,8 @@ chosenFilters = {
     ingredients : [],
     appareils   : [],
     ustensiles  : [],
-};
+},
+newDishes = [];
 
 let dishesTemplate = createDishesAndFiltersTemplate(dishes);
 
@@ -103,13 +104,28 @@ window.addEventListener('click', function(e){
             document.querySelector(`p#${element.getAttribute('for-id')}`).closest('div').classList.add('hidden')
             document.querySelector(`p#${element.getAttribute('for-id')}`).closest('div').classList.add('tagged')
         });
+
+        let searchResult = searchInDishes(document.querySelector('.input-search').value.toLowerCase(), getCompatibledishWithFilters());
+
+        let newDishesTemplate = createDishesTemplates(searchResult);
+
+        renderDishes(newDishesTemplate);
     }
 });
 
 //search inside drop down filter
 document.querySelectorAll('.drop-down-filter-input-search-ingredient, .drop-down-filter-input-search-appareil, .drop-down-filter-input-search-ustensile').forEach(inputSearch => inputSearch.addEventListener('keyup', filter));
 
-//on click add filter to tags and update filters to be compatible
+//search by global search
+document.querySelector('.input-search').addEventListener('keyup', function(e) {
+    let search = e.target.value,
+        data = getCompatibledishWithFilters().length === 0 ? dishes : getCompatibledishWithFilters(),
+        newDishesTemplate = (search.length > 2) ? createDishesTemplates(searchInDishes(search.toLowerCase(), getCompatibledishWithFilters())) : createDishesTemplates(data); 
+
+    renderDishes(newDishesTemplate);
+
+});
+
 window.addEventListener('click', function(e) {
     if(e.target.classList.contains('clickable')) {
         let searchIn = e.target.getAttribute('data-search-in'),
@@ -147,6 +163,12 @@ window.addEventListener('click', function(e) {
         
         //empty search input
         document.querySelector(`input[data-search="${e.target.getAttribute('data-type')}"]`).value = ""
+
+        let searchResult = searchInDishes(document.querySelector('.input-search').value.toLowerCase(), getCompatibledishWithFilters());
+
+        let newDishesTemplate = createDishesTemplates(searchResult);
+
+        renderDishes(newDishesTemplate);
     }
 });
 
@@ -235,6 +257,16 @@ function createDishesTemplates(dishes) {
                     </div>`
     });
 
+    if(dishes.length > 0) {
+        //we have result
+        document.querySelector('.no-result').classList.add('hidden');
+        document.querySelector('.dishes').classList.remove('hidden');
+    }else{
+        //we don't have result
+        document.querySelector('.no-result').classList.remove('hidden');
+        document.querySelector('.dishes').classList.add('hidden');
+    }
+    
     filters.ingredients = new Set(ingredientsTempFilters);
     filters.appareils = new Set(appareilsTempFilters);
     filters.ustensiles = new Set(ustensilesTempFilters);
@@ -375,7 +407,13 @@ function updateDropDownFilters(searchFilterKey, text, dishesList) {
 
     chosenFilters[searchFilterKey].push(text)
 
-    let newDishesTemplate = createDishesTemplates(dishesList);
+    newDishes = updateDishesData();
+
+    let searchResult = searchInDishes(document.querySelector('.input-search').value.toLowerCase(), dishesList);
+
+    let newDishesTemplate = createDishesTemplates(searchResult);
+
+    renderDishes(newDishesTemplate);
 }
 
 //create new dishes array from filtred ingredient, appareils and ustensiles
@@ -602,4 +640,40 @@ function getUstensilesFromDishes(dishesList) {
 //make only the first character of the string uppercase
 function makeFirstCharacterUpperCase(str) {
     return str.charAt(0).toUpperCase() + str.slice(1)
+}
+
+function searchInDishes(search, dishList) {
+    let searchResult = [],
+        data = dishList.length === 0 ? dishes : dishList;
+
+    for(let i = 0; i < data.length; i++) {
+        let dish = data[i],
+            dishName = dish.name,
+            dishDescription = dish.description,
+            dishIngredients = dish.ingredients;
+
+        //dish name includes searched word
+        if(dishName.toLowerCase().includes(search)) {
+            searchResult.push(dish);
+            continue;
+        }
+
+        //dish description includes searched word
+        if(dishDescription.toLowerCase().includes(search)) {
+            searchResult.push(dish);
+            continue;
+        }
+
+        //dish ingredients includes search word
+        for(let j = 0; j < dishIngredients.length; j++) {
+            let dishIngredient = dishIngredients[j].ingredient;
+
+            if(dishIngredient.toLowerCase().includes(search)) {
+                searchResult.push(dish);
+                break;
+            }
+        }
+    }
+
+    return searchResult
 }
